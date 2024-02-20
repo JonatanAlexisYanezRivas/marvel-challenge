@@ -11,9 +11,6 @@ public record CharacterDto(
     	String imagePath,
 		String description
     ){
-         
-         
 
-        
     }
 }
