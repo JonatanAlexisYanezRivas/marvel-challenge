@@ -5,6 +5,8 @@ import com.test.api.marvelchallenge.dto.MyPageable;
 import com.test.api.marvelchallenge.persistence.integration.marvel.MarvelAPIConfig;
 import com.test.api.marvelchallenge.persistence.integration.marvel.dto.ComicDto;
 
+import com.test.api.marvelchallenge.persistence.integration.marvel.mapper.ComicMapper;
+import com.test.api.marvelchallenge.services.HttpClientService;
 import jakarta.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +20,11 @@ import java.util.Map;
 @Repository
 public class ComicRepository {
 
-      @Autowired
+    @Autowired
     private MarvelAPIConfig marvelAPIConfig;
+
+    @Autowired
+    private HttpClientService httpClientService;
 
     @Value("${integration.marvel.base-path}")
     private String basePath; 
@@ -37,7 +42,7 @@ public class ComicRepository {
 
         JsonNode response = httpClientService.doGet(comicPath, marvelQueryParams, JsonNode.class);
 
-        return ComicMapper.toDoList(response);
+        return ComicMapper.toDtoList(response);
     }
 
     private Map<String, String> getQueryParamsForFindAll(MyPageable pageable, Long characterId) {
@@ -65,6 +70,6 @@ public class ComicRepository {
 
         JsonNode response = httpClientService.doGet(finalUrl, marvelQueryParams, JsonNode.class);
 
-        return ComicMapper.toDoList(response);
+        return ComicMapper.toDtoList(response).get(0);
     }
 }

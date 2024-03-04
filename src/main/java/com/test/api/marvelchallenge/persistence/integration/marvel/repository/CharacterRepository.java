@@ -2,9 +2,11 @@ package com.test.api.marvelchallenge.persistence.integration.marvel.repository;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.test.api.marvelchallenge.dto.MyPageable;
+import com.test.api.marvelchallenge.persistence.integration.marvel.mapper.CharacterMapper;
 import com.test.api.marvelchallenge.persistence.integration.marvel.MarvelAPIConfig;
 import com.test.api.marvelchallenge.persistence.integration.marvel.dto.CharacterDto;
 
+import com.test.api.marvelchallenge.services.HttpClientService;
 import jakarta.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,9 @@ public class CharacterRepository {
     @Autowired
     private MarvelAPIConfig marvelAPIConfig;
 
+    @Autowired
+    private HttpClientService httpClientService;
+
     @Value("${integration.marvel.base-path}")
     private String basePath; 
     private String characterPath;
@@ -36,7 +41,7 @@ public class CharacterRepository {
         Map<String, String>  marvelQueryParams = getQueryParamsForFindAll(pageable, name, comics, series);
         JsonNode response = httpClientService.doGet(characterPath, marvelQueryParams, JsonNode.class);
 
-        return CharacterMapper.toDoList(response);
+        return CharacterMapper.toDtoList(response);
     }
 
     private Map<String, String> getQueryParamsForFindAll(MyPageable pageable, String name, int[] comics, int[] series) {
@@ -79,6 +84,6 @@ public class CharacterRepository {
 
         JsonNode response = httpClientService.doGet(finalUrl, marverlQueryParams, JsonNode.class);
 
-        return CharacterMapper.toDoList(response).get(0);
+        return CharacterMapper.toInfoDtoList(response).get(0);
     }
 }
